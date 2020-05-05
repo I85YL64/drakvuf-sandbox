@@ -8,6 +8,7 @@ import pytest
 
 from pathlib import Path
 from fabric import task, Connection, Config
+from invoke.exceptions import UnexpectedExit
 from minio import Minio
 from minio.error import ResponseError
 
@@ -44,6 +45,7 @@ DRAKMON_DEPS = [
     "bridge-utils",
     "dnsmasq",
     "libmagic1",
+    "strace",
 ]
 
 DRAKVUF_BUNDLE_URL = "https://github.com/tklengyel/drakvuf-builds/releases/download/20200318193922-a1ef03c/drakvuf-bundle-0.7-a1ef03c-generic.deb"
@@ -177,3 +179,15 @@ def drakmon_vm():
         c.run("brctl addbr drak0")
 
     return Connection("testvm", config=FABRIC_CONFIG)
+
+@pytest.fixture(scope="session")
+def karton_bucket(drakmon_vm):
+    """ Wait up to 10 seconds until karton2 bucket appears """
+    for _ in range(10):
+        try:
+            drakmon_vm.run("[[ -f /var/lib/drakcore/minio/karton2 ]]")
+            break
+        except UnexpectedExit:
+            time.sleep(1.0)
+
+    return None

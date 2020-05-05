@@ -33,7 +33,8 @@ def test_web_ui_reachable(drakmon_vm):
 
 
 @pytest.fixture
-def drakcore():
+def drakcore(karton_bucket):
+    """ Requires that karton2 bucket being present """
     return Drakcore(f"http://{VM_HOST}:6300")
 
 

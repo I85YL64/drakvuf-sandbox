@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/opt/venvs/drakcore/bin/drak-system
+ExecStart=strace /opt/venvs/drakcore/bin/drak-system
 User=root
 Group=root
 Restart=on-failure
